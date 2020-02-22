@@ -1,8 +1,8 @@
 # BZ的python教学
 
-## 第一节课：[基础教学](基础教学/BZ的python基础教学.md)
+## 第一节课：[基础教学](基础教学/基础教学.md)
 
-## 第二节课：[python操作excel](#fragment)
+## 第二节课：[python操作excel](python操作excel/python操作excel.md)
 
 ## 第三节课：[爬虫](#fragment)
 
