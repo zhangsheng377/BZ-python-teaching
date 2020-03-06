@@ -4,7 +4,7 @@
 
 ## 第二节课：[python操作excel](python操作excel/python操作excel.md)
 
-## 第三节课：[爬虫](#fragment)
+## 第三节课：[爬虫](爬虫/爬虫.md)
 
 ## 第四节课：[量化交易系列](#fragment)
 
