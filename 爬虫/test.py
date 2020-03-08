@@ -15,8 +15,16 @@ def scrapy_xueqiu(needSaveToCsv=False):
     }
 
     session = requests.session()
-    with open("COOKIES",'rb') as f:
-        cookie_ = pickle.load(f)
+
+    try:
+        with open("COOKIES",'rb') as f:
+            cookie_ = pickle.load(f)
+    except:
+        first_request = session.get(url='https://xueqiu.com/', headers=headers, timeout=10)
+        with open("COOKIES",'wb') as f:
+            pickle.dump(first_request.cookies, f)
+        cookie_ = first_request.cookies
+
     session.cookies = cookie_
 
     api_request = session.get(url='https://xueqiu.com/statuses/search.json?sort=time&source=all&q=01810&count=10&page=1', headers=headers, timeout=10)
@@ -27,9 +35,10 @@ def scrapy_xueqiu(needSaveToCsv=False):
         databese = client["xueqiu"]
         sheet = databese["comments"]
         for comment in list_data:
-            sub_text = re.sub(u"<.*?>|\\$.*?\\$", "", comment['text'])
+            sub_text = re.sub(u"<.*?>|\\$.*?\\$|\\&nbsp\\;", "", comment['text'])
             sub_text = sub_text.strip()
             last_record_text = sheet.find_one(sort=[('_id',-1)])['text']
+            print(sub_text)
             if sub_text == last_record_text:
                 print('丢弃重复最新内容\n')
                 continue
