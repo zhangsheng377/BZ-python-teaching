@@ -8,6 +8,7 @@ import json
 import re
 from pymongo import MongoClient, errors  # 树莓派只能通过pip安装3.2版本
 import pandas as pd
+from snownlp import SnowNLP
 
 index_url = 'https://xueqiu.com/'
 api_url = 'https://xueqiu.com/statuses/search.json?sort=time&source=all&q=01810&count=10&page=1'
@@ -55,11 +56,17 @@ def scrapy_xueqiu(needSaveToCsv=False):
                 print('丢弃重复最新内容\n')
                 continue
 
+            snownlp_senta = 0.5
+            try:
+                snownlp_senta = SnowNLP(sub_text).sentiments
+            except:
+                pass
+
             try:
                 # sheet.insert_one里面用_id表示key
                 sheet.insert_one({'_id': comment['id'], 'user_id': comment['user_id'],
-                                  'time': comment['created_at'], 'text': sub_text, 'raw': str(comment)})
-                print(sub_text)
+                                  'time': comment['created_at'], 'text': sub_text, 'snownlp_senta': snownlp_senta, 'raw': str(comment)})
+                print(sub_text, snownlp_senta)
                 print(comment['id'], '评论插入成功\n')
             except errors.DuplicateKeyError as e:
                 print(comment['id'], '已经存在于数据库\n')
