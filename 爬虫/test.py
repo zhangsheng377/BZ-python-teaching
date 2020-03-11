@@ -1,4 +1,5 @@
-from UA import agents
+from UA import Agents
+from COOKIES import Cookies
 
 import time
 import requests
@@ -10,36 +11,23 @@ from pymongo import MongoClient, errors  # 树莓派只能通过pip安装3.2版�
 import pandas as pd
 from snownlp import SnowNLP
 
-index_url = 'https://xueqiu.com/'
+
 api_url = 'https://xueqiu.com/statuses/search.json?sort=time&source=all&q=01810&count=10&page=1'
-
-
-def get_and_save_cookis(session, headers):
-    first_request = session.get(url=index_url, headers=headers, timeout=10)
-    with open("COOKIES", 'wb') as f:
-        pickle.dump(first_request.cookies, f)
-    return first_request.cookies
 
 
 def scrapy_xueqiu(needSaveToCsv=False):
     headers = {
-        'User-Agent': random.choice(agents)
+        'User-Agent': Agents().get_random_agent()
     }
 
     session = requests.session()
 
-    try:
-        with open("COOKIES", 'rb') as f:
-            cookie_ = pickle.load(f)
-    except:
-        cookie_ = get_and_save_cookis(session, headers)
-
-    session.cookies = cookie_
+    session.cookies = Cookies(headers=headers).cookie
 
     api_request = session.get(url=api_url, headers=headers, timeout=10)
     if api_request.status_code != 200:
-        session.cookies = get_and_save_cookis(session, headers)
-        api_request = session.get(url=api_url, headers=headers, timeout=10)
+        print("api_request.status_code", api_request.status_code)
+        return
 
     json_api_request = json.loads(api_request.text)
     list_data = json_api_request['list']

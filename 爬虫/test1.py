@@ -2,6 +2,8 @@ from pymongo import MongoClient, errors # 树莓派只能通过pip安装3.2版�
 from snownlp import SnowNLP
 import re
 
+# 等到paddlehub支持树莓派时，就可以用百度paddle的预训练模型，甚至之后可以做个网站或小程序，不断的迁移学习更新paddlehub的与训练模型
+
 with MongoClient() as client:
     databese = client["xueqiu"]
     sheet = databese["comments"]
