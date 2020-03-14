@@ -9,8 +9,9 @@ class DataBasePyMongo(DataBase):
         self._databese = self._client[database_name]
         self._sheet = self._databese[sheet_name]
 
-    # pymongo sheet.insert_one里面用_id表示key
     def insert(self, document):
+        ''' pymongo sheet.insert_one里面用_id表示key
+        '''
         try:
             self._sheet.insert_one(document=document)
             return True
