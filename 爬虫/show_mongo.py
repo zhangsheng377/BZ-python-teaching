@@ -1,10 +1,6 @@
-from pymongo import MongoClient, errors # 树莓派只能通过pip安装3.2版本
-from snownlp import SnowNLP
-import re
+from DATABASE import DataBaseFactory
 
-with MongoClient() as client:
-    databese = client["xueqiu"]
-    sheet = databese["comments"]
-    for data in sheet.find():
-        print(data)
-
+dataSheet = DataBaseFactory(database_name="xueqiu",
+                            sheet_name="comments", model="pymongo")
+for data in dataSheet.find():
+    print(data)
