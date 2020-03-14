@@ -1,6 +1,7 @@
 from UA import Agents
 from COOKIES import Cookies
 from SENTA import SentaFactory
+from BLACKLIST import blackList
 
 import time
 import requests
@@ -40,6 +41,13 @@ def scrapy_xueqiu(needSaveToCsv=False):
             sub_text = re.sub(u"<.*?>|\\$.*?\\$|\\&nbsp\\;",
                               "", comment['text'])
             sub_text = sub_text.strip()
+
+            if sub_text == "":
+                continue
+
+            if comment['user_id'] in blackList and '小米' not in sub_text:
+                continue
+
             last_record_text = sheet.find_one(sort=[('_id', -1)])['text']
             if sub_text == last_record_text:
                 print('丢弃重复最新内容\n')
@@ -49,8 +57,8 @@ def scrapy_xueqiu(needSaveToCsv=False):
 
             try:
                 # sheet.insert_one里面用_id表示key
-                sheet.insert_one({'_id': comment['id'], 'user_id': comment['user_id'],
-                                  'time': comment['created_at'], 'text': sub_text, 'snownlp_senta': senta_score, 'raw': str(comment)})
+                sheet.insert_one({'_id': comment['id'], 'user_id': comment['user_id'], 'time': comment['created_at'],
+                                  'text': sub_text, 'snownlp_senta': senta_score, 'raw': str(comment)})
                 print(sub_text, senta_score)
                 print(comment['id'], comment['user_id'], '评论插入成功\n')
             except errors.DuplicateKeyError as e:
@@ -65,7 +73,10 @@ def scrapy_xueqiu(needSaveToCsv=False):
 def timedTask(gapSecond=1200):
     while True:
         scrapy_xueqiu(needSaveToCsv=True)
-        time.sleep(gapSecond + random.randint(0, 300))
+        sleepSecond = gapSecond + random.randint(0, 300)
+        print(time.asctime(time.localtime(time.time())),
+              "    sleep {} s".format(sleepSecond))
+        time.sleep(sleepSecond)
 
 
 if __name__ == '__main__':
