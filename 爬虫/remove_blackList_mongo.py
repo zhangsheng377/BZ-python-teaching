@@ -1,6 +1,7 @@
 import re
 
 from BLACKLIST import blackList
+from BLACKLIST import blackBlackList
 from DATABASE import DataBaseFactory
 
 # 模糊匹配查询
@@ -36,4 +37,14 @@ for blackUserId in blackList:
             dataSheet.delete(filter={'_id': data['_id']})
 
     data_list = list(dataSheet.find(filter={'user_id': blackUserId}))
+    print(len(data_list))
+
+for blackBlackUserId in blackBlackList:
+    data_list = list(dataSheet.find(filter={'user_id': blackBlackUserId}))
+    print(len(data_list))
+
+    for data in data_list:
+        dataSheet.delete(filter={'_id': data['_id']})
+
+    data_list = list(dataSheet.find(filter={'user_id': blackBlackUserId}))
     print(len(data_list))

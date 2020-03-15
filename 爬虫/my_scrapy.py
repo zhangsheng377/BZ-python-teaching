@@ -2,6 +2,7 @@ from UA import Agents
 from COOKIES import Cookies
 from SENTA import SentaFactory
 from BLACKLIST import blackList
+from BLACKLIST import blackBlackList
 from DATABASE import DataBaseFactory
 
 import time
@@ -22,9 +23,13 @@ def scrapy_xueqiu(needSaveToCsv=False):
 
     session = requests.session()
 
-    session.cookies = Cookies(headers=headers).cookie
+    try:
+        session.cookies = Cookies(headers=headers).cookie
+        api_request = session.get(url=api_url, headers=headers, timeout=10)
+    except:
+        print("session error!")
+        return
 
-    api_request = session.get(url=api_url, headers=headers, timeout=10)
     if api_request.status_code != 200:
         print("api_request.status_code:", api_request.status_code)
         return
@@ -42,6 +47,9 @@ def scrapy_xueqiu(needSaveToCsv=False):
         sub_text = sub_text.strip()
 
         if sub_text == "":
+            continue
+
+        if comment['user_id'] in blackBlackList:
             continue
 
         if comment['user_id'] in blackList and '小米' not in sub_text:
